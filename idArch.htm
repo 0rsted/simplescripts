@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="da">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
@@ -58,11 +58,10 @@
         baseOs.arch = 'arm'
       } else if (ua.includes('windows')) {
         baseOs.platform = 'windows'
+        baseOs.arch = 'x86' // if nothing else matches, it's x86
         if (ua.match(/wow64|win64|x64|x86_64/)) {
-          baseOs.platform = 'windows'
           baseOs.arch = 'x64'
-        } else if (ua.match(/x86/)) {
-          baseOs.arch = 'x32'
+        // I should probably add something to detect arm, but I don't need it right now
         }
       } else if (ua.includes('mac')) {
         baseOs.platform = 'mac'
