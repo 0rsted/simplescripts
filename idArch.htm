@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <title>IDArch</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
@@ -42,12 +42,15 @@
       }
     }
     const getBaseOs = () => {
+      const ua = window.navigator.userAgent.toLowerCase()
       const baseOs = {
         arch: undefined,
         platform: undefined,
         isMobile: false,
+        certain: false,
+        isMacFirefox: false,
+        ua
       }
-      const ua = window.navigator.userAgent.toLowerCase()
       if (ua.includes('android')) {
         baseOs.isMobile = true
         baseOs.platform = 'android'
@@ -61,14 +64,27 @@
         baseOs.arch = 'x86' // if nothing else matches, it's x86
         if (ua.match(/wow64|win64|x64|x86_64/)) {
           baseOs.arch = 'x64'
+          baseOs.certain = true
         // I should probably add something to detect arm, but I don't need it right now
         }
       } else if (ua.includes('mac')) {
         baseOs.platform = 'mac'
+        baseOs.arch = 'intel'
+        baseOs.certain = true
         const canvas = document.createElement('canvas');
         const gl = canvas.getContext('webgl');
         // @ts-expect-error - Object is possibly 'null'
         const isAppleSilicon = gl.getSupportedExtensions().indexOf('WEBGL_compressed_texture_etc') !== -1
+        if (isAppleSilicon) {
+          if(ua.includes('firefox')) {
+            baseOs.certain = false
+            baseOs.isMacFirefox = true
+            baseOs.webglExtensions = gl.getSupportedExtensions()
+          } else {
+            baseOs.arch = 'mx'
+            baseOs.certain = true
+          }
+        }
         baseOs.arch = isAppleSilicon ? 'mx' : 'intel'
       }
       return baseOs
