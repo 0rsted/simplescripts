@@ -93,7 +93,9 @@
       const baseOs = getBaseOs()
       document.getElementById('raw').textContent = JSON.stringify(baseOs, null, 2)
       if (baseOs.isMobile) {
-        document.getElementById('platformarch').textContent = "this is a mobile device"
+        const pa = document.getElementById('platformarch')
+        pa.textContent = "this is a mobile device"
+        pa.style.setProperty('height', 'auto')
         return
       }
       const image = document.createElement('img')
