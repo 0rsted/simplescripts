@@ -14,8 +14,15 @@
 <script>
   const body = document.body
   const isFramed = (window.self !== window.top)
+  let fe, tl
+  try {
+    fe = window.frameElement.src
+  } catch {}
+  try {
+    tl = top.location.href
+  } catch {}
   const pre = document.createElement('pre')
-  pre.textContent = `${isFramed}\n${window.frameElement.src}\n${top.location.href}`
+  pre.textContent = `${isFramed}\n${fe}\n${tl}`
   body.appendChild(pre)
   window.frameElement.setAttribute('allowtransparency', true)
   window.frameElement.style.setProperty('background-color', 'transparent') 
