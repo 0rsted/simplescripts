@@ -14,12 +14,15 @@
 <script>
   const body = document.body
   const isFramed = (window.self !== window.top)
-  let fe, tl
+  let fe, tl, wtl
   try {
     fe = window.frameElement.src
   } catch {}
   try {
     tl = top.location.href
+  } catch {}
+  try {
+    wtl = window.top.location.href
   } catch {}
   const pre = document.createElement('pre')
   pre.textContent = `${isFramed}\n${fe}\n${tl}`
