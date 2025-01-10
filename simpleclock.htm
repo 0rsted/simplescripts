@@ -1,107 +1,168 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>JS Clock</title>
-    <style>
-      * {
-        font-family: "SF Display Pro", sans-serif;
-      }
-      td {
-        text-align: center;
-        vertical-align: top;
-        text-transform: lowercase;
-      }
-      td:first-letter {
-        text-transform: uppercase;
-      }
-      #minute::before,
-      #second::before {
-        content: ":";
-      }
-      #hiddenDateField {
-        display: none;
-      }
-      #time {
-        font-size: xxx-large;
-        font-weight: bold;
-      }
-    </style>
-  </head>
-  <body>
-    <table>
-      <tr>
-        <td id="time"></td>
-      </tr>
-      <tr>
-        <td id="date"></td>
-      </tr>
-    </table>
-  </body>
-  <script>
-    const padZero = (input, length = 2) => {
-      return String(input).padStart(length, "0");
-    };
-    const months = [
-      "januar",
-      "februar",
-      "marts",
-      "april",
-      "maj",
-      "juni",
-      "juli",
-      "august",
-      "september",
-      "oktober",
-      "november",
-      "december",
-    ];
-    const days = [
-      "søndag",
-      "mandag",
-      "tirsdag",
-      "onsdag",
-      "torsdag",
-      "fredag",
-      "lørdag",
-      "søndag",
-    ];
 
-    const timeField = document.getElementById("time");
-    const hourField = document.createElement("span");
-    hourField.setAttribute("id", "hour");
-    const minuteField = document.createElement("span");
-    minuteField.setAttribute("id", "minute");
-    const secondField = document.createElement("span");
-    secondField.setAttribute("id", "second");
-    timeField.appendChild(hourField);
-    timeField.appendChild(minuteField);
+<head>
+  <title>JS Clock</title>
+  <style>
+    * {
+      font-family: "SF Display Pro", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    td {
+      text-align: center;
+      vertical-align: top;
+      text-transform: lowercase;
+    }
+
+    .ucfirst {
+      text-transform: lowercase;
+    }
+
+    .ucfirst:first-letter {
+      text-transform: uppercase;
+    }
+
+    #minute::before,
+    #second::before {
+      content: ":";
+    }
+
+    #hiddenDateField {
+      display: none;
+    }
+
+    #time {
+      font-size: 38cqw;
+      /* 25 if seconds are shown, 38 if not */
+      line-height: 1.1em;
+      font-weight: bold;
+    }
+
+    #date {
+      font-size: 7.5cqw;
+      line-height: 1.2em;
+      font-weight: normal;
+    }
+
+    #time,
+    #date {
+      container: content/inline-size;
+      resize: none;
+      contain: paint;
+      text-align: center;
+    }
+
+    #content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      align-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="content">
+    <div id="time"></div>
+    <div id="date"></div>
+  </div>
+</body>
+<script>
+  const padZero = (input, length = 2) => {
+    return String(input).padStart(length, "0");
+  };
+  const months = [
+    "januar",
+    "februar",
+    "marts",
+    "april",
+    "maj",
+    "juni",
+    "juli",
+    "august",
+    "september",
+    "oktober",
+    "november",
+    "december",
+  ];
+  const days = [
+    "søndag",
+    "mandag",
+    "tirsdag",
+    "onsdag",
+    "torsdag",
+    "fredag",
+    "lørdag",
+    "søndag",
+  ];
+
+  const qsStrToBool = (input) => {
+    input = input && String(input).toLowerCase()
+    let rVal = undefined
+    // if the value is an empty string, the value isn't defined, but the key is
+    if (['true', 't', '1', ''].includes(input)) rVal = true
+    // if the value is null, the key isn't defined
+    if (['false', 'f', '0', null].includes(input)) rVal = false
+    return rVal
+  }
+
+  const params = new URLSearchParams(document.location.search)
+  const showSeconds = (qsStrToBool(params.get('seconds')) || !qsStrToBool(params.get('hideSeconds')) )
+  const fontColor = params.get('colour') ? params.get('colour') :
+    params.get('color') ? params.get('color') : "000000"
+  const capitalize = qsStrToBool(params.get('capitalize'))
+
+  if (fontColor) {
+    Array.from(document.getElementsByTagName('div')).forEach(function (el) {
+      el.style.setProperty('color', `#${fontColor}`)
+    })
+  }
+
+  const timeField = document.getElementById("time");
+  const hourField = document.createElement("span");
+  hourField.setAttribute("id", "hour");
+  const minuteField = document.createElement("span");
+  minuteField.setAttribute("id", "minute");
+  const secondField = document.createElement("span");
+  secondField.setAttribute("id", "second");
+  timeField.appendChild(hourField);
+  timeField.appendChild(minuteField);
+  if (showSeconds) {
     timeField.appendChild(secondField);
-    const dateField = document.getElementById("date");
-    const textDateField = document.createElement("span");
-    textDateField.setAttribute("id", "textDateField");
-    const hiddenDateField = document.createElement("span");
-    hiddenDateField.setAttribute("id", "hiddenDateField");
-    dateField.appendChild(textDateField);
-    dateField.appendChild(hiddenDateField);
+    timeField.style.fontSize = '25cqw'
+  }
+  const dateField = document.getElementById("date");
+  const textDateField = document.createElement("span");
+  textDateField.setAttribute("id", "textDateField");
+  const hiddenDateField = document.createElement("span");
+  hiddenDateField.setAttribute("id", "hiddenDateField");
+  dateField.appendChild(textDateField);
+  dateField.appendChild(hiddenDateField);
 
-    const run = () => {
-      const now = new Date();
-      const hour = padZero(now.getHours());
-      const minute = padZero(now.getMinutes());
-      const second = padZero(now.getSeconds());
-      const year = now.getFullYear();
-      const month = now.getMonth(); // note - month is zero-indexed
-      const date = padZero(now.getDate());
-      const weekday = now.getDay(); // note - zeroindexed, so sunday is 0
-      const ymd = `${year}${month}${date}`;
-      if (secondField.textContent !== second) secondField.textContent = second;
-      if (minuteField.textContent !== minute) minuteField.textContent = minute;
-      if (hourField.textContent !== hour) hourField.textContent = hour;
-      if (hiddenDateField.textContent !== ymd) {
-        hiddenDateField.textContent = ymd;
-        textDateField.textContent = `${days[weekday]} den ${date}. ${months[month]} ${year}`;
-      }
-    };
+  const run = () => {
+    const now = new Date();
+    const hour = padZero(now.getHours());
+    const minute = padZero(now.getMinutes());
+    const second = padZero(now.getSeconds());
+    const year = now.getFullYear();
+    const month = now.getMonth(); // note - month is zero-indexed
+    const date = padZero(now.getDate());
+    const weekday = now.getDay(); // note - zeroindexed, so sunday is 0
+    const ymd = `${year}${month}${date}`;
+    if (secondField.textContent !== second) secondField.textContent = second;
+    if (minuteField.textContent !== minute) minuteField.textContent = minute;
+    if (hourField.textContent !== hour) hourField.textContent = hour;
+    if (hiddenDateField.textContent !== ymd) {
+      hiddenDateField.textContent = ymd;
+      textDateField.textContent = `${days[weekday]} den ${date}. ${months[month]} ${year}`;
+    }
+  };
 
-    setInterval(run, 100);
-  </script>
+  setInterval(run, 100);
+</script>
+
 </html>
