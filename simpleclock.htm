@@ -133,6 +133,10 @@
       capitalizeParams: [
         "capitalize"
       ],
+      dateParams: [
+        "date",
+        "showdate"
+      ],
       secondsParams: [
         "seconds",
         "showSeconds"
@@ -198,13 +202,16 @@
       timeField.appendChild(secondField)
       timeField.style.fontSize = '25cqw'
     }
-    const dateField = document.getElementById("date")
-    const textDateField = document.createElement("span")
-    textDateField.setAttribute("id", "textDateField")
-    const hiddenDateField = document.createElement("span")
-    hiddenDateField.setAttribute("id", "hiddenDateField")
-    dateField.appendChild(textDateField)
-    dateField.appendChild(hiddenDateField)
+    const showDate = qsStrToBool(getParam('date'))
+    if (showDate) {
+      const dateField = document.getElementById("date")
+      const textDateField = document.createElement("span")
+      textDateField.setAttribute("id", "textDateField")
+      const hiddenDateField = document.createElement("span")
+      hiddenDateField.setAttribute("id", "hiddenDateField")
+      dateField.appendChild(textDateField)
+      dateField.appendChild(hiddenDateField)
+    }
 
     const run = () => {
       const now = new Date()
@@ -216,14 +223,16 @@
         const second = padZero(now.getSeconds())
         if (secondField.textContent !== second) secondField.textContent = second
       }
-      const year = now.getFullYear()
-      const month = now.getMonth() // note - month is zero-indexed
-      const date = padZero(now.getDate())
-      const ymd = `${year}${month}${date}`
-      if (hiddenDateField.textContent !== ymd) {
-        hiddenDateField.textContent = ymd
-        const weekday = now.getDay() // note - zeroindexed, so sunday is 0
-        textDateField.textContent = `${days[weekday]} den ${date}. ${months[month]} ${year}`
+      if (showDate) {
+        const year = now.getFullYear()
+        const month = now.getMonth() // note - month is zero-indexed
+        const date = padZero(now.getDate())
+        const ymd = `${year}${month}${date}`
+        if (hiddenDateField.textContent !== ymd) {
+          hiddenDateField.textContent = ymd
+          const weekday = now.getDay() // note - zeroindexed, so sunday is 0
+          textDateField.textContent = `${days[weekday]} den ${date}. ${months[month]} ${year}`
+        }
       }
     }
     let intervalTimer
