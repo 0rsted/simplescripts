@@ -111,7 +111,6 @@
   }
 
   const params = new URLSearchParams(document.location.search)
-  const showSeconds = (qsStrToBool(params.get('seconds')) || !qsStrToBool(params.get('hideSeconds')) )
   const fontColor = params.get('colour') ? params.get('colour') :
     params.get('color') ? params.get('color') : "000000"
   const capitalize = qsStrToBool(params.get('capitalize'))
@@ -121,6 +120,11 @@
       el.style.setProperty('color', `#${fontColor}`)
     })
   }
+
+  const bgColor = params.get('background') ? params.get('background') : 'FFFFFF' // fe00fd
+  document.body.style.setProperty('background-color', `#{bgColor}`)
+
+  const showSeconds = (qsStrToBool(params.get('seconds')) || !qsStrToBool(params.get('hideSeconds')))
 
   const timeField = document.getElementById("time");
   const hourField = document.createElement("span");
