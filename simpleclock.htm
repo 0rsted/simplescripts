@@ -24,26 +24,13 @@
       text-transform: uppercase;
     }
 
-    #minute::before,
-    #second::before {
-      content: ":";
-    }
-
-    #hiddenDateField {
-      display: none;
-    }
-
-    #time {
-      font-size: 38cqw;
-      /* 25 if seconds are shown, 38 if not */
-      line-height: 1.1em;
-      font-weight: bold;
-    }
-
-    #date {
-      font-size: 7.5cqw;
-      line-height: 1.2em;
-      font-weight: normal;
+    #content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      align-content: center;
     }
 
     #time,
@@ -54,13 +41,40 @@
       text-align: center;
     }
 
-    #content {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      align-content: center;
+    #time {
+      font-size: 38cqw;
+      /* 25 if seconds are shown, 38 if not */
+      line-height: 1.1em;
+      font-weight: bold;
+    }
+
+    #hour,
+    #minute,
+    #second {
+      display: inline-block;
+      width: 1.45em;
+      margin-left: -0.14em;
+    }
+
+    #hour {
+      width: 1.2em;
+    }
+
+    #minute::before,
+    #second::before {
+      display: inline-block;
+      content: ":";
+      width: 0.28em;
+    }
+
+    #date {
+      font-size: 7.5cqw;
+      line-height: 1.2em;
+      font-weight: normal;
+    }
+
+    #hiddenDateField {
+      display: none;
     }
   </style>
 </head>
@@ -196,18 +210,20 @@
     minuteField.setAttribute("id", "minute")
     timeField.appendChild(hourField)
     timeField.appendChild(minuteField)
+    let secondField
     if (showSeconds) {
-      const secondField = document.createElement("span")
+      secondField = document.createElement("span")
       secondField.setAttribute("id", "second")
       timeField.appendChild(secondField)
       timeField.style.fontSize = '25cqw'
     }
     const showDate = qsStrToBool(getParam('date'))
+    let dateField, textDateField, hiddenDateField
     if (showDate) {
-      const dateField = document.getElementById("date")
-      const textDateField = document.createElement("span")
+      dateField = document.getElementById("date")
+      textDateField = document.createElement("span")
       textDateField.setAttribute("id", "textDateField")
-      const hiddenDateField = document.createElement("span")
+      hiddenDateField = document.createElement("span")
       hiddenDateField.setAttribute("id", "hiddenDateField")
       dateField.appendChild(textDateField)
       dateField.appendChild(hiddenDateField)
