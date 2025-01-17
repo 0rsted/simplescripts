@@ -43,6 +43,8 @@
     }
     const getBaseOs = () => {
       const ua = window.navigator.userAgent.toLowerCase()
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl');
       const baseOs = {
         arch: undefined,
         platform: undefined,
@@ -50,7 +52,7 @@
         certain: false,
         isMacFirefox: false,
         ua,
-        webglExtensions: '',
+        webglExtensions: gl.getSupportedExtensions(),
       }
       if (ua.includes('android')) {
         baseOs.isMobile = true
@@ -72,11 +74,8 @@
         baseOs.platform = 'mac'
         baseOs.arch = 'intel'
         baseOs.certain = true
-        const canvas = document.createElement('canvas');
-        const gl = canvas.getContext('webgl');
         // @ts-expect-error - Object is possibly 'null'
         const isAppleSilicon = gl.getSupportedExtensions().indexOf('WEBGL_compressed_texture_etc') !== -1
-        baseOs.webglExtensions = gl.getSupportedExtensions()
         if (isAppleSilicon) {
           if(ua.includes('firefox')) {
             baseOs.certain = false
